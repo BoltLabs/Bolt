@@ -1247,7 +1247,7 @@ std::string rai_qt::wallet::format_balance (rai::uint128_t const & balance) cons
 	{
 		unit = std::string ("mBAN");
 	}
-	else if (rendering_ratio == rai::ban_ratio)
+	else if (rendering_ratio == rai::BAN_ratio)
 	{
 		unit = std::string ("banoshi");
 	}

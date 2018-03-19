@@ -359,7 +359,7 @@ if (BANANO_GUI)
 
 	add_executable (banano_wallet ${PLATFORM_GUI_TARGET_PROPERTIES}
 		${PLATFORM_WALLET_SOURCE}
-		banano/rai_wallet/entry.cpp
+		banano/banano_wallet/entry.cpp
 		${RES})
 
 	add_executable (qt_test

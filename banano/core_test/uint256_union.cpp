@@ -79,11 +79,11 @@ TEST (uint128_union, balance_format)
 	ASSERT_EQ ("1.23", rai::amount (rai::uint128_t ("1230000000000000000000000000000")).format_balance (rai::BAN_ratio, 2, true));
 	ASSERT_EQ ("1.2", rai::amount (rai::uint128_t ("1230000000000000000000000000000")).format_balance (rai::BAN_ratio, 1, true));
 	ASSERT_EQ ("1", rai::amount (rai::uint128_t ("1230000000000000000000000000000")).format_balance (rai::BAN_ratio, 0, true));
-	ASSERT_EQ ("< 0.01", rai::amount (rai::ban_ratio * 10).format_balance (rai::BAN_ratio, 2, true));
-	ASSERT_EQ ("< 0.1", rai::amount (rai::ban_ratio * 10).format_balance (rai::BAN_ratio, 1, true));
-	ASSERT_EQ ("< 1", rai::amount (rai::ban_ratio * 10).format_balance (rai::BAN_ratio, 0, true));
-	ASSERT_EQ ("< 0.01", rai::amount (rai::ban_ratio * 9999).format_balance (rai::BAN_ratio, 2, true));
-	ASSERT_EQ ("0.01", rai::amount (rai::ban_ratio * 10000).format_balance (rai::BAN_ratio, 2, true));
+	ASSERT_EQ ("< 0.01", rai::amount (rai::BAN_ratio * 10).format_balance (rai::BAN_ratio, 2, true));
+	ASSERT_EQ ("< 0.1", rai::amount (rai::BAN_ratio * 10).format_balance (rai::BAN_ratio, 1, true));
+	ASSERT_EQ ("< 1", rai::amount (rai::BAN_ratio * 10).format_balance (rai::BAN_ratio, 0, true));
+	ASSERT_EQ ("< 0.01", rai::amount (rai::BAN_ratio * 9999).format_balance (rai::BAN_ratio, 2, true));
+	ASSERT_EQ ("0.01", rai::amount (rai::BAN_ratio * 10000).format_balance (rai::BAN_ratio, 2, true));
 	ASSERT_EQ ("123456789", rai::amount (rai::BAN_ratio * 123456789).format_balance (rai::BAN_ratio, 2, false));
 	ASSERT_EQ ("123,456,789", rai::amount (rai::BAN_ratio * 123456789).format_balance (rai::BAN_ratio, 2, true));
 	ASSERT_EQ ("123,456,789.12", rai::amount (rai::BAN_ratio * 123456789 + rai::mBAN_ratio * 123).format_balance (rai::BAN_ratio, 2, true));
