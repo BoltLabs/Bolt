@@ -23,7 +23,7 @@ For more information, see [Banano.co.in](http://banano.co.in/) or read the [Yell
 - [Banano website](http://banano.co.in)
 - [Yellowpaper](http://Banano.co.in/)
 - [Moonmap](http://banano.co.in/)
-- [Discord chat](http://discord.gg/ZdCmdCB)
+- [Discord chat](https://discord.gg/SBPaSBS)
 - [Reddit](http://reddit.com/r/bananocoin)
 - [Fritter](http://twitter.com/bananocoin)
 - [GitHub wiki](http://github.com/bananocoin/banano/wiki)
@@ -33,9 +33,9 @@ For more information, see [Banano.co.in](http://banano.co.in/) or read the [Yell
 https://github.com/BananoCoin/banano/wiki/Building-a-Bananode-guide
 
 ### Want to contribute?
-Please visit us on the [Discord](http://discord.gg/ZdCmdCB).
+Please visit us on the [Discord](https://discord.gg/SBPaSBS).
 
 ### Contact us
 
 We want to hear about any trouble, success, delight, or pain you experience when
-eating Banano. Let us know by [filing an issue](http://github.com/bananocoin/banano/issues), or joining us on [Discord](http://discord.gg/ZdCmdCB).
+eating Banano. Let us know by [filing an issue](http://github.com/bananocoin/banano/issues), or joining us on [Discord](https://discord.gg/SBPaSBS).
