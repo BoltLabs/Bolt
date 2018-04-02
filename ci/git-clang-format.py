@@ -4,14 +4,14 @@
 # University of Illinois/NCSA
 # Open Source License
 
-# Copyright (c) 2007-2016 University of Illinois at Urbana-Champaign.
+# Copyright (c) 2007-2016 University of Illinois at Urblta-Champaign.
 # All rights reserved.
 
 # Developed by:
 
 #     LLVM Team
 
-#     University of Illinois at Urbana-Champaign
+#     University of Illinois at Urblta-Champaign
 
 #     http://llvm.org
 
@@ -30,7 +30,7 @@
 #       documentation and/or other materials provided with the distribution.
 
 #     * Neither the names of the LLVM Team, University of Illinois at
-#       Urbana-Champaign, nor the names of its contributors may be used to
+#       Urblta-Champaign, nor the names of its contributors may be used to
 #       endorse or promote products derived from this Software without specific
 #       prior written permission.
 

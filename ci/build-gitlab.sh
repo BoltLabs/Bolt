@@ -6,24 +6,24 @@ DISTRO_CFG=""
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     CPACK_TYPE="TBZ2"
     distro=$(lsb_release -i -c -s|tr '\n' '_')
-    DISTRO_CFG="-DBANANO_DISTRO_NAME=${distro}"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
+    DISTRO_CFG="-DBOLT_DISTRO_NAME=${distro}"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
     CPACK_TYPE="DragNDrop"
-elif [[ "$OSTYPE" == "cygwin" ]]; then
+    elif [[ "$OSTYPE" == "cygwin" ]]; then
     CPACK_TYPE="TBZ2"
-elif [[ "$OSTYPE" == "msys" ]]; then
+    elif [[ "$OSTYPE" == "msys" ]]; then
     CPACK_TYPE="NSIS" #?
-elif [[ "$OSTYPE" == "win32" ]]; then
+    elif [[ "$OSTYPE" == "win32" ]]; then
     CPACK_TYPE="NSIS"
-elif [[ "$OSTYPE" == "freebsd"* ]]; then
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
     CPACK_TYPE="TBZ2"
-    DISTRO_CFG="-DBANANO_DISTRO_NAME='freebsd'"
+    DISTRO_CFG="-DBOLT_DISTRO_NAME='freebsd'"
 else
     CPACK_TYPE="TBZ2"
 fi
 
 if [[ ${SIMD} -eq 1 ]]; then
-    SIMD_CFG="-DBANANO_SIMD_OPTIMIZATIONS=ON"
+    SIMD_CFG="-DBOLT_SIMD_OPTIMIZATIONS=ON"
     CRYPTOPP_CFG=""
     echo SIMD and other optimizations enabled
     echo local CPU:
@@ -34,11 +34,11 @@ else
 fi
 
 if [[ ${ASAN_INT} -eq 1 ]]; then
-    SANITIZERS="-DBANANO_ASAN_INT=ON"
-elif [[ ${ASAN} -eq 1 ]]; then
-    SANITIZERS="-DBANANO_ASAN=ON"
-elif [[ ${TSAN} -eq 1 ]]; then
-    SANITIZERS="-DBANANO_TSAN=ON"
+    SANITIZERS="-DBOLT_ASAN_INT=ON"
+    elif [[ ${ASAN} -eq 1 ]]; then
+    SANITIZERS="-DBOLT_ASAN=ON"
+    elif [[ ${TSAN} -eq 1 ]]; then
+    SANITIZERS="-DBOLT_TSAN=ON"
 else
     SANITIZERS=""
 fi
@@ -58,11 +58,38 @@ set -o nounset
 
 run_build() {
     build_dir=build_${FLAVOR}
+    
+    mkdir ${build_dir}
+    cd ${build_dir}
+    cmake -GNinja \
+    -DBOLT_GUI=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DCMAKE_INSTALL_PREFIX="../install" \
+    ${CRYPTOPP_CFG} \
+    ${DISTRO_CFG} \
+    ${SIMD_CFG} \
+    -DBOOST_ROOT=/usr/local/boost \
+    ${BOOST_CFG} \
+    ${SANITIZERS} \
+    ..
+    
+    cmake --build ${PWD} -- -v
+    cmake --build ${PWD} -- install -v
+    cpack -G ${CPACK_TYPE} ${PWD}
+    sha1sum *.tar* > SHA1SUMS
+}
+
+run_build
+set -o nounset
+
+run_build() {
+    build_dir=build_${FLAVOR}
 
     mkdir ${build_dir}
     cd ${build_dir}
     cmake -GNinja \
-       -DBANANO_GUI=ON \
+       -DBOLT_GUI=ON \
        -DCMAKE_BUILD_TYPE=Release \
        -DCMAKE_VERBOSE_MAKEFILE=ON \
        -DCMAKE_INSTALL_PREFIX="../install" \

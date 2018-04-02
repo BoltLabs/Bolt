@@ -7,14 +7,14 @@
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
 	<key>CFBundleExecutable</key>
-	<string>banano_wallet</string>
+	<string>bolt_wallet</string>
 	<key>CFBundleName</key>
-	<string>Banano</string>
+	<string>Bolt</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleIconFile</key>
-	<string>banano.icns</string>
+	<string>bolt.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.banano.banano_wallet</string>
+	<string>net.bolt.bolt_wallet</string>
 </dict>
 </plist>

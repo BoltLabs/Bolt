@@ -10,13 +10,13 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-set (BANANO_GUI OFF CACHE BOOL "")
-set (BANANO_TEST OFF CACHE BOOL "")
-set (BANANO_SECURE_RPC OFF CACHE BOOL "")
+set (BOLT_GUI OFF CACHE BOOL "")
+set (BOLT_TEST OFF CACHE BOOL "")
+set (BOLT_SECURE_RPC OFF CACHE BOOL "")
 
-option(BANANO_ASAN_INT "Enable ASan+UBSan+Integer overflow" OFF)
-option(BANANO_ASAN "Enable ASan+UBSan" OFF)
-option(BANANO_SIMD_OPTIMIZATIONS "Enable CPU-specific SIMD optimizations (SSE/AVX or NEON, e.g.)" OFF)
+option(BOLT_ASAN_INT "Enable ASan+UBSan+Integer overflow" OFF)
+option(BOLT_ASAN "Enable ASan+UBSan" OFF)
+option(BOLT_SIMD_OPTIMIZATIONS "Enable CPU-specific SIMD optimizations (SSE/AVX or NEON, e.g.)" OFF)
 set (BOOST_CUSTOM OFF CACHE BOOL "")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -28,16 +28,16 @@ if (WIN32)
 	set (BLAKE2_IMPLEMENTATION "blake2/blake2b.c")
 else (WIN32)
 	set (PLATFORM_COMPILE_FLAGS "-DBOOST_SPIRIT_THREADSAFE -Werror=switch -fPIC")
-	if (BANANO_ASAN)
+	if (BOLT_ASAN)
 		set (PLATFORM_COMPILE_FLAGS "${PLATFORM_COMPILE_FLAGS} -fsanitize=address,undefined -DED25519_NO_INLINE_ASM")
-	elseif (BANANO_ASAN_INT)
+	elseif (BOLT_ASAN_INT)
 		set (PLATFORM_COMPILE_FLAGS "${PLATFORM_COMPILE_FLAGS} -fsanitize=address,undefined,integer -DED25519_NO_INLINE_ASM")
-	elseif (BANANO_TSAN)
+	elseif (BOLT_TSAN)
 		set (PLATFORM_COMPILE_FLAGS "${PLATFORM_COMPILE_FLAGS} -fsanitize=thread -DED25519_NO_INLINE_ASM")
 	endif()
 
 	IF (CMAKE_SYSTEM_PROCESSOR MATCHES "^(i.86|x86(_64)?)$")
-		if (BANANO_SIMD_OPTIMIZATIONS)
+		if (BOLT_SIMD_OPTIMIZATIONS)
 			set (PLATFORM_COMPILE_FLAGS "${PLATFORM_COMPILE_FLAGS} -msse4")
 		elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
 			set (PLATFORM_COMPILE_FLAGS "${PLATFORM_COMPILE_FLAGS} -msse2")
@@ -81,16 +81,16 @@ elseif (WIN32)
 	set (PLATFORM_LINK_FLAGS "")
 else ()
 	set (PLATFORM_LINK_FLAGS "-static-libgcc -static-libstdc++")
-	if (BANANO_ASAN)
+	if (BOLT_ASAN)
 		set (PLATFORM_LINK_FLAGS "${PLATFORM_LINK_FLAGS} -fsanitize=address,undefined")
-	elseif (BANANO_ASAN_INT)
+	elseif (BOLT_ASAN_INT)
 		set (PLATFORM_LINK_FLAGS "${PLATFORM_LINK_FLAGS} -fsanitize=address,undefined,integer")
-	elseif (BANANO_TSAN)
+	elseif (BOLT_TSAN)
 		set (PLATFORM_LINK_FLAGS "${PLATFORM_LINK_FLAGS} -fsanitize=thread")
 	endif()
 endif (APPLE)
 
-if (BANANO_GUI)
+if (BOLT_GUI)
 	if (WIN32)
 		set (PLATFORM_QT_PACKAGES WinExtras)
 	else (WIN32)
@@ -99,19 +99,19 @@ if (BANANO_GUI)
 
 	find_package (Qt5 COMPONENTS Core Gui Widgets Test ${PLATFORM_QT_PACKAGES})
 	include_directories (${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Test_INCLUDE_DIRS})
-endif (BANANO_GUI)
+endif (BOLT_GUI)
 
-if (BANANO_SECURE_RPC)
+if (BOLT_SECURE_RPC)
 	find_package (OpenSSL 1.0 EXACT REQUIRED)
 	include_directories(${OPENSSL_INCLUDE_DIR})
-	add_definitions (-DBANANO_SECURE_RPC)
+	add_definitions (-DBOLT_SECURE_RPC)
 	message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
 	message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
 	message("OpenSSL lib: ${OPENSSL_SSL_LIBRARY}")
 	message("Crypto lib: ${OPENSSL_CRYPTO_LIBRARY}")
 else ()
 	set (OPENSSL_LIBRARIES "")
-endif (BANANO_SECURE_RPC)
+endif (BOLT_SECURE_RPC)
 
 include_directories (${CMAKE_SOURCE_DIR})
 
@@ -159,7 +159,7 @@ include_directories (miniupnp/miniupnpc)
 set (BUILD_SHARED OFF CACHE BOOL "")
 set (BUILD_TESTING OFF CACHE BOOL "")
 set (USE_INTERMEDIATE_OBJECTS_TARGET OFF CACHE BOOL "")
-if (CRYPTOPP_CUSTOM OR NOT BANANO_SIMD_OPTIMIZATIONS)
+if (CRYPTOPP_CUSTOM OR NOT BOLT_SIMD_OPTIMIZATIONS)
 	set (CRYPTOPP_LIBRARY cryptopp)
 	add_library (cryptopp
 	cryptopp/algparam.cpp
@@ -228,24 +228,24 @@ add_library (blake2
 	${BLAKE2_IMPLEMENTATION})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	set (PLATFORM_LIB_SOURCE banano/plat/default/priority.cpp)
-	set (PLATFORM_SECURE_SOURCE banano/plat/osx/working.mm)
-	set (PLATFORM_WALLET_SOURCE banano/plat/default/icon.cpp)
+	set (PLATFORM_LIB_SOURCE bolt/plat/default/priority.cpp)
+	set (PLATFORM_SECURE_SOURCE bolt/plat/osx/working.mm)
+	set (PLATFORM_WALLET_SOURCE bolt/plat/default/icon.cpp)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set (PLATFORM_LIB_SOURCE banano/plat/windows/priority.cpp)
-	set (PLATFORM_SECURE_SOURCE banano/plat/windows/working.cpp)
-	set (PLATFORM_NODE_SOURCE banano/plat/windows/openclapi.cpp)
-	set (PLATFORM_WALLET_SOURCE banano/plat/windows/icon.cpp banano.rc)
+	set (PLATFORM_LIB_SOURCE bolt/plat/windows/priority.cpp)
+	set (PLATFORM_SECURE_SOURCE bolt/plat/windows/working.cpp)
+	set (PLATFORM_NODE_SOURCE bolt/plat/windows/openclapi.cpp)
+	set (PLATFORM_WALLET_SOURCE bolt/plat/windows/icon.cpp bolt.rc)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set (PLATFORM_LIB_SOURCE banano/plat/linux/priority.cpp)
-	set (PLATFORM_SECURE_SOURCE banano/plat/posix/working.cpp)
-	set (PLATFORM_NODE_SOURCE banano/plat/posix/openclapi.cpp)
-	set (PLATFORM_WALLET_SOURCE banano/plat/default/icon.cpp)
+	set (PLATFORM_LIB_SOURCE bolt/plat/linux/priority.cpp)
+	set (PLATFORM_SECURE_SOURCE bolt/plat/posix/working.cpp)
+	set (PLATFORM_NODE_SOURCE bolt/plat/posix/openclapi.cpp)
+	set (PLATFORM_WALLET_SOURCE bolt/plat/default/icon.cpp)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-	set (PLATFORM_LIB_SOURCE banano/plat/default/priority.cpp)
-	set (PLATFORM_SECURE_SOURCE banano/plat/posix/working.cpp)
-	set (PLATFORM_NODE_SOURCE banano/plat/posix/openclapi.cpp)
-	set (PLATFORM_WALLET_SOURCE banano/plat/default/icon.cpp)
+	set (PLATFORM_LIB_SOURCE bolt/plat/default/priority.cpp)
+	set (PLATFORM_SECURE_SOURCE bolt/plat/posix/working.cpp)
+	set (PLATFORM_NODE_SOURCE bolt/plat/posix/openclapi.cpp)
+	set (PLATFORM_WALLET_SOURCE bolt/plat/default/icon.cpp)
 else ()
 	error ("Unknown platform: ${CMAKE_SYSTEM_NAME}")
 endif ()
@@ -259,132 +259,132 @@ file (WRITE ${CMAKE_BINARY_DIR}/bootstrap_weights.cpp "#include <cstddef>\n"
 	"	size_t rai_bootstrap_weights_size = sizeof(rai_bootstrap_weights) - 1;\n"
 	"}\n")
 
-if (BANANO_SECURE_RPC)
-	set (SECURE_RPC_SOURCE banano/node/rpc_secure.cpp banano/node/rpc_secure.hpp)
+if (BOLT_SECURE_RPC)
+	set (SECURE_RPC_SOURCE bolt/node/rpc_secure.cpp bolt/node/rpc_secure.hpp)
 endif ()
 
 add_library (secure
 	${PLATFORM_SECURE_SOURCE}
 	${CMAKE_BINARY_DIR}/bootstrap_weights.cpp
-	banano/config.hpp
-	banano/common.cpp
-	banano/common.hpp
-	banano/blockstore.cpp
-	banano/blockstore.hpp
-	banano/ledger.cpp
-	banano/ledger.hpp
-	banano/node/utility.cpp
-	banano/node/utility.hpp
-	banano/versioning.hpp
-	banano/versioning.cpp)
+	bolt/config.hpp
+	bolt/common.cpp
+	bolt/common.hpp
+	bolt/blockstore.cpp
+	bolt/blockstore.hpp
+	bolt/ledger.cpp
+	bolt/ledger.hpp
+	bolt/node/utility.cpp
+	bolt/node/utility.hpp
+	bolt/versioning.hpp
+	bolt/versioning.cpp)
 
 SET (RAI_LIB_SOURCES
 	${PLATFORM_LIB_SOURCE}
-	banano/lib/blocks.cpp
-	banano/lib/blocks.hpp
-	banano/lib/interface.cpp
-	banano/lib/interface.h
-	banano/lib/numbers.cpp
-	banano/lib/numbers.hpp
-	banano/lib/utility.cpp
-	banano/lib/utility.hpp
-	banano/lib/work.hpp
-	banano/lib/work.cpp)
+	bolt/lib/blocks.cpp
+	bolt/lib/blocks.hpp
+	bolt/lib/interface.cpp
+	bolt/lib/interface.h
+	bolt/lib/numbers.cpp
+	bolt/lib/numbers.hpp
+	bolt/lib/utility.cpp
+	bolt/lib/utility.hpp
+	bolt/lib/work.hpp
+	bolt/lib/work.cpp)
 
-add_library (banano_lib SHARED ${RAI_LIB_SOURCES})
-add_library (banano_lib_static STATIC ${RAI_LIB_SOURCES})
+add_library (bolt_lib SHARED ${RAI_LIB_SOURCES})
+add_library (bolt_lib_static STATIC ${RAI_LIB_SOURCES})
 
 add_library (node
 	${PLATFORM_NODE_SOURCE}
 	${SECURE_RPC_SOURCE}
-	banano/node/bootstrap.cpp
-	banano/node/bootstrap.hpp
-	banano/node/common.cpp
-	banano/node/common.hpp
-	banano/node/node.hpp
-	banano/node/node.cpp
-	banano/node/openclwork.cpp
-	banano/node/openclwork.hpp
-	banano/node/rpc.hpp
-	banano/node/rpc.cpp
-	banano/node/testing.hpp
-	banano/node/testing.cpp
-	banano/node/wallet.hpp
-	banano/node/wallet.cpp
-	banano/node/working.hpp
-	banano/node/xorshift.hpp)
+	bolt/node/bootstrap.cpp
+	bolt/node/bootstrap.hpp
+	bolt/node/common.cpp
+	bolt/node/common.hpp
+	bolt/node/node.hpp
+	bolt/node/node.cpp
+	bolt/node/openclwork.cpp
+	bolt/node/openclwork.hpp
+	bolt/node/rpc.hpp
+	bolt/node/rpc.cpp
+	bolt/node/testing.hpp
+	bolt/node/testing.cpp
+	bolt/node/wallet.hpp
+	bolt/node/wallet.cpp
+	bolt/node/working.hpp
+	bolt/node/xorshift.hpp)
 
 
 SET (ACTIVE_NETWORK rai_live_network CACHE STRING "Selects which network parameters are used")
 set_property (CACHE ACTIVE_NETWORK PROPERTY STRINGS rai_test_network rai_beta_network rai_live_network)
 
-if (BANANO_TEST)
+if (BOLT_TEST)
 	add_executable (core_test
-		banano/core_test/block.cpp
-		banano/core_test/block_store.cpp
-		banano/core_test/interface.cpp
-		banano/core_test/conflicts.cpp
-		banano/core_test/daemon.cpp
-		banano/core_test/entry.cpp
-		banano/core_test/gap_cache.cpp
-		banano/core_test/ledger.cpp
-		banano/core_test/network.cpp
-		banano/core_test/node.cpp
-		banano/core_test/message.cpp
-		banano/core_test/message_parser.cpp
-		banano/core_test/processor_service.cpp
-		banano/core_test/peer_container.cpp
-		banano/core_test/rpc.cpp
-		banano/core_test/uint256_union.cpp
-		banano/core_test/versioning.cpp
-		banano/core_test/wallet.cpp
-		banano/core_test/wallets.cpp
-		banano/core_test/work_pool.cpp)
+		bolt/core_test/block.cpp
+		bolt/core_test/block_store.cpp
+		bolt/core_test/interface.cpp
+		bolt/core_test/conflicts.cpp
+		bolt/core_test/daemon.cpp
+		bolt/core_test/entry.cpp
+		bolt/core_test/gap_cache.cpp
+		bolt/core_test/ledger.cpp
+		bolt/core_test/network.cpp
+		bolt/core_test/node.cpp
+		bolt/core_test/message.cpp
+		bolt/core_test/message_parser.cpp
+		bolt/core_test/processor_service.cpp
+		bolt/core_test/peer_container.cpp
+		bolt/core_test/rpc.cpp
+		bolt/core_test/uint256_union.cpp
+		bolt/core_test/versioning.cpp
+		bolt/core_test/wallet.cpp
+		bolt/core_test/wallets.cpp
+		bolt/core_test/work_pool.cpp)
 
 	add_executable (slow_test
-		banano/slow_test/node.cpp)
+		bolt/slow_test/node.cpp)
 
-	set_target_properties (core_test slow_test PROPERTIES COMPILE_FLAGS "${PLATFORM_CXX_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DQT_NO_KEYWORDS -DACTIVE_NETWORK=${ACTIVE_NETWORK} -DBANANO_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR} -DBANANO_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR} -DBOOST_ASIO_HAS_STD_ARRAY=1")
+	set_target_properties (core_test slow_test PROPERTIES COMPILE_FLAGS "${PLATFORM_CXX_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DQT_NO_KEYWORDS -DACTIVE_NETWORK=${ACTIVE_NETWORK} -DBOLT_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR} -DBOLT_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR} -DBOOST_ASIO_HAS_STD_ARRAY=1")
 	set_target_properties (core_test slow_test PROPERTIES LINK_FLAGS "${PLATFORM_LINK_FLAGS}")
-endif (BANANO_TEST)
+endif (BOLT_TEST)
 
-if (BANANO_GUI)
+if (BOLT_GUI)
 
 	qt5_add_resources(RES resources.qrc)
 
 
 	add_library (qt
-		banano/qt/qt.cpp
-		banano/qt/qt.hpp)
+		bolt/qt/qt.cpp
+		bolt/qt/qt.hpp)
 
-	add_executable (banano_wallet ${PLATFORM_GUI_TARGET_PROPERTIES}
+	add_executable (bolt_wallet ${PLATFORM_GUI_TARGET_PROPERTIES}
 		${PLATFORM_WALLET_SOURCE}
-		banano/banano_wallet/entry.cpp
+		bolt/bolt_wallet/entry.cpp
 		${RES})
 
 	add_executable (qt_test
-		banano/qt_test/entry.cpp
-		banano/qt_test/qt.cpp)
+		bolt/qt_test/entry.cpp
+		bolt/qt_test/qt.cpp)
 
 	add_executable (qt_system
-		banano/qt_system/entry.cpp)
+		bolt/qt_system/entry.cpp)
 
-	set_target_properties (banano_wallet qt_test PROPERTIES LINK_FLAGS "${PLATFORM_LINK_FLAGS}")
+	set_target_properties (bolt_wallet qt_test PROPERTIES LINK_FLAGS "${PLATFORM_LINK_FLAGS}")
 
-	set_target_properties (qt_test qt banano_wallet qt_system PROPERTIES COMPILE_FLAGS "${PLATFORM_CXX_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DQT_NO_KEYWORDS -DACTIVE_NETWORK=${ACTIVE_NETWORK} -DBANANO_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR} -DBANANO_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR} -DBOOST_ASIO_HAS_STD_ARRAY=1")
+	set_target_properties (qt_test qt bolt_wallet qt_system PROPERTIES COMPILE_FLAGS "${PLATFORM_CXX_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DQT_NO_KEYWORDS -DACTIVE_NETWORK=${ACTIVE_NETWORK} -DBOLT_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR} -DBOLT_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR} -DBOOST_ASIO_HAS_STD_ARRAY=1")
 	set_target_properties (qt qt_system PROPERTIES LINK_FLAGS "${PLATFORM_LINK_FLAGS}")
-endif (BANANO_GUI)
+endif (BOLT_GUI)
 
-add_executable (bananode
-	banano/bananode/daemon.cpp
-	banano/bananode/daemon.hpp
-	banano/bananode/entry.cpp)
+add_executable (bolt_node
+	bolt/bolt_node/daemon.cpp
+	bolt/bolt_node/daemon.hpp
+	bolt/bolt_node/entry.cpp)
 
 set_target_properties (argon2 PROPERTIES COMPILE_FLAGS "${PLATFORM_C_FLAGS} ${PLATFORM_COMPILE_FLAGS}")
 set_target_properties (blake2 PROPERTIES COMPILE_FLAGS "${PLATFORM_C_FLAGS} ${PLATFORM_COMPILE_FLAGS} -D__SSE2__")
 set_target_properties (ed25519 PROPERTIES COMPILE_FLAGS "${PLATFORM_C_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DED25519_CUSTOMHASH -DED25519_CUSTOMRNG")
-set_target_properties (secure node bananode banano_lib banano_lib_static PROPERTIES COMPILE_FLAGS "${PLATFORM_CXX_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DQT_NO_KEYWORDS -DACTIVE_NETWORK=${ACTIVE_NETWORK} -DBANANO_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR} -DBANANO_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR} -DBOOST_ASIO_HAS_STD_ARRAY=1")
-set_target_properties (secure node bananode PROPERTIES LINK_FLAGS "${PLATFORM_LINK_FLAGS}")
+set_target_properties (secure node bolt_node bolt_lib bolt_lib_static PROPERTIES COMPILE_FLAGS "${PLATFORM_CXX_FLAGS} ${PLATFORM_COMPILE_FLAGS} -DQT_NO_KEYWORDS -DACTIVE_NETWORK=${ACTIVE_NETWORK} -DBOLT_VERSION_MAJOR=${CPACK_PACKAGE_VERSION_MAJOR} -DBOLT_VERSION_MINOR=${CPACK_PACKAGE_VERSION_MINOR} -DBOOST_ASIO_HAS_STD_ARRAY=1")
+set_target_properties (secure node bolt_node PROPERTIES LINK_FLAGS "${PLATFORM_LINK_FLAGS}")
 
 if (WIN32)
 	set (PLATFORM_LIBS Ws2_32 mswsock iphlpapi ntdll)
@@ -398,27 +398,27 @@ else (WIN32)
 	set (PLATFORM_WALLET_LIBS)
 endif (WIN32)
 
-if (BANANO_TEST)
-	target_link_libraries (core_test node secure lmdb ed25519 banano_lib_static argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest_main gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${PLATFORM_LIBS})
+if (BOLT_TEST)
+	target_link_libraries (core_test node secure lmdb ed25519 bolt_lib_static argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest_main gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_THREAD_LIBRARY} ${PLATFORM_LIBS})
 
-	target_link_libraries (slow_test node secure lmdb ed25519 banano_lib_static argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest_main gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} ${PLATFORM_LIBS})
-endif (BANANO_TEST)
+	target_link_libraries (slow_test node secure lmdb ed25519 bolt_lib_static argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest_main gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} ${PLATFORM_LIBS})
+endif (BOLT_TEST)
 
-if (BANANO_GUI)
-	target_link_libraries (qt_test node secure lmdb ed25519 banano_lib_static qt argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Test ${QT_QTGUI_LIBRARY} ${PLATFORM_LIBS})
+if (BOLT_GUI)
+	target_link_libraries (qt_test node secure lmdb ed25519 bolt_lib_static qt argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Test ${QT_QTGUI_LIBRARY} ${PLATFORM_LIBS})
 
-	target_link_libraries (qt_system node secure lmdb ed25519 banano_lib_static qt argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} Qt5::Core Qt5::Gui Qt5::Widgets ${QT_QTGUI_LIBRARY} ${PLATFORM_LIBS})
+	target_link_libraries (qt_system node secure lmdb ed25519 bolt_lib_static qt argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} gtest libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} Qt5::Core Qt5::Gui Qt5::Widgets ${QT_QTGUI_LIBRARY} ${PLATFORM_LIBS})
 
-	target_link_libraries (banano_wallet node secure lmdb ed25519 banano_lib_static qt argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} Qt5::Core Qt5::Gui Qt5::Widgets ${QT_QTGUI_LIBRARY} ${PLATFORM_LIBS} ${PLATFORM_WALLET_LIBS})
-endif (BANANO_GUI)
+	target_link_libraries (bolt_wallet node secure lmdb ed25519 bolt_lib_static qt argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} Qt5::Core Qt5::Gui Qt5::Widgets ${QT_QTGUI_LIBRARY} ${PLATFORM_LIBS} ${PLATFORM_WALLET_LIBS})
+endif (BOLT_GUI)
 
-target_link_libraries (banano_lib ed25519 xxhash blake2 ${CRYPTOPP_LIBRARY})
-target_link_libraries (banano_lib_static ed25519 xxhash blake2 ${CRYPTOPP_LIBRARY})
+target_link_libraries (bolt_lib ed25519 xxhash blake2 ${CRYPTOPP_LIBRARY})
+target_link_libraries (bolt_lib_static ed25519 xxhash blake2 ${CRYPTOPP_LIBRARY})
 
-target_link_libraries (bananode node secure lmdb ed25519 banano_lib_static argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} ${PLATFORM_LIBS})
+target_link_libraries (bolt_node node secure lmdb ed25519 bolt_lib_static argon2 ${OPENSSL_LIBRARIES} ${CRYPTOPP_LIBRARY} libminiupnpc-static ${Boost_ATOMIC_LIBRARY} ${Boost_CHRONO_LIBRARY} ${Boost_REGEX_LIBRARY} ${Boost_DATE_TIME_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_LOG_LIBRARY} ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_LOG_SETUP_LIBRARY} ${Boost_THREAD_LIBRARY} ${PLATFORM_LIBS})
 
 set (CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/LICENSE)
-if (BANANO_GUI)
+if (BOLT_GUI)
 	if (APPLE)
 		get_filename_component (Qt5Core_framework_DIR ${Qt5_DIR}/../../QtCore.framework ABSOLUTE)
 		get_filename_component (Qt5Gui_framework_DIR ${Qt5_DIR}/../../QtGui.framework ABSOLUTE)
@@ -428,48 +428,48 @@ if (BANANO_GUI)
 		get_filename_component (Qt5_platforms_DIR ${Qt5_DIR}/../../../plugins/platforms ABSOLUTE)
 
 		file (COPY ${Qt5Core_framework_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtCore.framework/Versions/5/QtCore")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtCore.framework/Versions/5/QtCore")
 
 		file (COPY ${Qt5Gui_framework_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtGui.framework/Versions/5/QtGui")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtGui.framework/Versions/5/QtGui")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtGui.framework/Versions/5/QtGui")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtGui.framework/Versions/5/QtGui")
 
 		file (COPY ${Qt5PrintSupport_framework_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtPrintSupport.framework/Versions/5/QtPrintSupport" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Widgets_framework_DIR}/Versions/5/QtWidgets" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtPrintSupport.framework/Versions/5/QtPrintSupport" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Widgets_framework_DIR}/Versions/5/QtWidgets" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework/Versions/5/QtPrintSupport")
 
 		file (COPY ${Qt5Test_framework_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtTest.framework/Versions/5/QtTest" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtTest.framework/Versions/5/QtTest")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtTest.framework/Versions/5/QtTest")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtTest.framework/Versions/5/QtTest" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtTest.framework/Versions/5/QtTest")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtTest.framework/Versions/5/QtTest")
 
 		file (COPY ${Qt5Widgets_framework_DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework/Versions/5/QtWidgets")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework/Versions/5/QtWidgets")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework/Versions/5/QtWidgets")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-id" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework/Versions/5/QtWidgets")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework/Versions/5/QtWidgets")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework/Versions/5/QtWidgets")
 
 		file (COPY ${Qt5_DIR}/../../../plugins/platforms/libqcocoa.dylib DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5PrintSupport_framework_DIR}/Versions/5/QtPrintSupport" "@executable_path/../Frameworks/QtPrintSupport.framework/Versions/5/QtPrintSupport" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Widgets_framework_DIR}/Versions/5/QtWidgets" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5PrintSupport_framework_DIR}/Versions/5/QtPrintSupport" "@executable_path/../Frameworks/QtPrintSupport.framework/Versions/5/QtPrintSupport" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Widgets_framework_DIR}/Versions/5/QtWidgets" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib")
 
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:banano_wallet> ${CMAKE_CURRENT_BINARY_DIR}/packaging)
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/banano_wallet")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/banano_wallet")
-		add_custom_command (TARGET banano_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Widgets_framework_DIR}/Versions/5/QtWidgets" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/banano_wallet")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:bolt_wallet> ${CMAKE_CURRENT_BINARY_DIR}/packaging)
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Core_framework_DIR}/Versions/5/QtCore" "@executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore" "${CMAKE_CURRENT_BINARY_DIR}/packaging/bolt_wallet")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Gui_framework_DIR}/Versions/5/QtGui" "@executable_path/../Frameworks/QtGui.framework/Versions/5/QtGui" "${CMAKE_CURRENT_BINARY_DIR}/packaging/bolt_wallet")
+		add_custom_command (TARGET bolt_wallet POST_BUILD COMMAND "install_name_tool" "-change" "${Qt5Widgets_framework_DIR}/Versions/5/QtWidgets" "@executable_path/../Frameworks/QtWidgets.framework/Versions/5/QtWidgets" "${CMAKE_CURRENT_BINARY_DIR}/packaging/bolt_wallet")
 
-		install (FILES ${CMAKE_CURRENT_BINARY_DIR}/packaging/banano_wallet DESTINATION Banano.app/Contents/MacOS PERMISSIONS OWNER_EXECUTE OWNER_READ)
-		install (FILES Info.plist DESTINATION Banano.app/Contents)
-		install (FILES qt.conf DESTINATION Banano.app/Contents/Resources)
-		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtCore.framework" DESTINATION Banano.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
-		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtGui.framework" DESTINATION Banano.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
-		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework" DESTINATION Banano.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
-		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtTest.framework" DESTINATION Banano.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
-		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework" DESTINATION Banano.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
-		install (FILES "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib" DESTINATION Banano.app/Contents/PlugIns/platforms PERMISSIONS OWNER_EXECUTE OWNER_READ)
-		install (FILES banano.icns DESTINATION Banano.app/Contents/Resources)
+		install (FILES ${CMAKE_CURRENT_BINARY_DIR}/packaging/bolt_wallet DESTINATION Bolt.app/Contents/MacOS PERMISSIONS OWNER_EXECUTE OWNER_READ)
+		install (FILES Info.plist DESTINATION Bolt.app/Contents)
+		install (FILES qt.conf DESTINATION Bolt.app/Contents/Resources)
+		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtCore.framework" DESTINATION Bolt.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
+		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtGui.framework" DESTINATION Bolt.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
+		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtPrintSupport.framework" DESTINATION Bolt.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
+		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtTest.framework" DESTINATION Bolt.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
+		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework" DESTINATION Bolt.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
+		install (FILES "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib" DESTINATION Bolt.app/Contents/PlugIns/platforms PERMISSIONS OWNER_EXECUTE OWNER_READ)
+		install (FILES bolt.icns DESTINATION Bolt.app/Contents/Resources)
 	elseif (WIN32)
 		if ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 			set (WIN_REDIST vc_redist.x64.exe)
@@ -477,16 +477,16 @@ if (BANANO_GUI)
 			set (WIN_REDIST vc_redist.x86.exe)
 		endif ()
 		set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\${WIN_REDIST}\\\" /quiet /norestart'")
-		set (CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/banano.ico)
-		set (CPACK_NSIS_DISPLAY_NAME "Banano")
-		set (CPACK_NSIS_PACKAGE_NAME "Banano ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-		set (CPACK_NSIS_URL_INFO_ABOUT "https://banano.co.in")
-		set (CPACK_NSIS_CONTACT "millsii3@banano.co.in")
-		set (CPACK_NSIS_MENU_LINKS "banano_wallet.exe" "Banano Wallet" "https://banano.co.in" "Banano website")
+		set (CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/bolt.ico)
+		set (CPACK_NSIS_DISPLAY_NAME "Bolt")
+		set (CPACK_NSIS_PACKAGE_NAME "Bolt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+		set (CPACK_NSIS_URL_INFO_ABOUT "https://bolt.co.in")
+		set (CPACK_NSIS_CONTACT "millsii3@bolt.co.in")
+		set (CPACK_NSIS_MENU_LINKS "bolt_wallet.exe" "Bolt Wallet" "https://bolt.co.in" "Bolt website")
 		set (CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 		get_target_property (Qt5WindowsPlugin Qt5::QWindowsIntegrationPlugin LOCATION)
 		get_filename_component (Qt5_bin_DIR ${Qt5_DIR}/../../../bin ABSOLUTE)
-		install (TARGETS banano_wallet DESTINATION .)
+		install (TARGETS bolt_wallet DESTINATION .)
 		install (FILES ${CMAKE_CURRENT_BINARY_DIR}/${WIN_REDIST} DESTINATION .)
 		install (FILES ${Qt5_bin_DIR}/libGLESv2.dll DESTINATION .)
 		install (FILES ${Qt5_bin_DIR}/Qt5Core.dll DESTINATION .)
@@ -495,12 +495,12 @@ if (BANANO_GUI)
 		install (FILES ${Qt5_bin_DIR}/Qt5WinExtras.dll DESTINATION .)
 		install (FILES ${Qt5WindowsPlugin} DESTINATION platforms)
 	else ()
-		install(TARGETS banano_wallet bananode banano_lib
+		install(TARGETS bolt_wallet bolt_node bolt_lib
 				RUNTIME DESTINATION bin
 				LIBRARY DESTINATION lib
 				ARCHIVE DESTINATION lib
 		)
 	endif ()
-endif (BANANO_GUI)
+endif (BOLT_GUI)
 
 include (CPack)

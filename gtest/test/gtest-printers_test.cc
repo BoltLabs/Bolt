@@ -685,7 +685,7 @@ TEST(PrintStringTest, StringAmbiguousHex) {
   // a hex escaping sequence following by a decimal digit
   EXPECT_EQ("\"0\\x12\" \"3\"", Print(::std::string("0\x12" "3")));
   // a hex escaping sequence following by a hex digit (lower-case)
-  EXPECT_EQ("\"mm\\x6\" \"bananas\"", Print(::std::string("mm\x6" "bananas")));
+  EXPECT_EQ("\"mm\\x6\" \"bltanas\"", Print(::std::string("mm\x6" "bltanas")));
   // a hex escaping sequence following by a hex digit (upper-case)
   EXPECT_EQ("\"NOM\\x6\" \"BANANA\"", Print(::std::string("NOM\x6" "BANANA")));
   // a hex escaping sequence following by a non-xdigit
@@ -718,8 +718,8 @@ TEST(PrintWideStringTest, StringInStdNamespace) {
 TEST(PrintWideStringTest, StringAmbiguousHex) {
   // same for wide strings.
   EXPECT_EQ("L\"0\\x12\" L\"3\"", Print(::std::wstring(L"0\x12" L"3")));
-  EXPECT_EQ("L\"mm\\x6\" L\"bananas\"",
-            Print(::std::wstring(L"mm\x6" L"bananas")));
+  EXPECT_EQ("L\"mm\\x6\" L\"bltanas\"",
+            Print(::std::wstring(L"mm\x6" L"bltanas")));
   EXPECT_EQ("L\"NOM\\x6\" L\"BANANA\"",
             Print(::std::wstring(L"NOM\x6" L"BANANA")));
   EXPECT_EQ("L\"!\\x5-!\"", Print(::std::wstring(L"!\x5-!")));

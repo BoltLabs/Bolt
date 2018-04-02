@@ -35,10 +35,10 @@
         },
         "work_peers": "",
         "preconfigured_peers": [
-            "peers.banano.co.in"
+            "peers.bolt.co.in"
         ],
         "preconfigured_representatives": [
-            "ban_1kdfy3ywutje79ney8t19ozoro3aeh177ikgzp7qowxbp7h9fso76xefe9gb",
+            "blt_1kdfy3ywutje79ney8t19ozoro3aeh177ikgzp7qowxbp7h9fso76xefe9gb",
         ],
         "inactive_supply": "0",
         "password_fanout": "1024",

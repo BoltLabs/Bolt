@@ -1,56 +1,83 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-qt_dir=${1}
-src_dir=${2}
-
-set -o errexit
-set -o nounset
 set -o xtrace
-OS=`uname`
 
-mkdir build
-pushd build
+DISTRO_CFG=""
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    CPACK_TYPE="TBZ2"
+    distro=$(lsb_release -i -c -s|tr '\n' '_')
+    DISTRO_CFG="-DBOLT_DISTRO_NAME=${distro}"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+    CPACK_TYPE="DragNDrop"
+    elif [[ "$OSTYPE" == "cygwin" ]]; then
+    CPACK_TYPE="TBZ2"
+    elif [[ "$OSTYPE" == "msys" ]]; then
+    CPACK_TYPE="NSIS" #?
+    elif [[ "$OSTYPE" == "win32" ]]; then
+    CPACK_TYPE="NSIS"
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
+    CPACK_TYPE="TBZ2"
+    DISTRO_CFG="-DBOLT_DISTRO_NAME='freebsd'"
+else
+    CPACK_TYPE="TBZ2"
+fi
 
-if [[ ${ASAN_INT-0} -eq 1 ]]; then
-    SANITIZERS="-DBANANO_ASAN_INT=ON"
-elif [[ ${ASAN-0} -eq 1 ]]; then
-    SANITIZERS="-DBANANO_ASAN=ON"
-elif [[ ${TSAN-0} -eq 1 ]]; then
-    SANITIZERS="-DBANANO_TSAN=ON"
+if [[ ${SIMD} -eq 1 ]]; then
+    SIMD_CFG="-DBOLT_SIMD_OPTIMIZATIONS=ON"
+    CRYPTOPP_CFG=""
+    echo SIMD and other optimizations enabled
+    echo local CPU:
+    cat /proc/cpuinfo # TBD for macOS
+else
+    SIMD_CFG=""
+    CRYPTOPP_CFG="-DCRYPTOPP_CUSTOM=ON"
+fi
+
+if [[ ${ASAN_INT} -eq 1 ]]; then
+    SANITIZERS="-DBOLT_ASAN_INT=ON"
+    elif [[ ${ASAN} -eq 1 ]]; then
+    SANITIZERS="-DBOLT_ASAN=ON"
+    elif [[ ${TSAN} -eq 1 ]]; then
+    SANITIZERS="-DBOLT_TSAN=ON"
 else
     SANITIZERS=""
 fi
 
-cmake \
-    -G'Unix Makefiles' \
-    -DACTIVE_NETWORK=rai_test_network \
-    -DBANANO_TEST=ON \
-    -DBANANO_GUI=ON \
-    -DCMAKE_BUILD_TYPE=Debug \
+if [[ "${BOOST_ROOT}" -ne "" ]]; then
+    BOOST_CFG="-DBOOST_ROOT='${BOOST_ROOT}'"
+else
+    BOOST_CFG=""
+fi
+
+BUSYBOX_BASH=${BUSYBOX_BASH-0}
+if [[ ${FLAVOR-_} == "_" ]]; then
+    FLAVOR=""
+fi
+
+set -o nounset
+
+run_build() {
+    build_dir=build_${FLAVOR}
+    
+    mkdir ${build_dir}
+    cd ${build_dir}
+    cmake -GNinja \
+    -DBOLT_GUI=ON \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
-    -DBOOST_ROOT=/usr/local \
-    -DQt5_DIR=${qt_dir} \
+    -DCMAKE_INSTALL_PREFIX="../install" \
+    ${CRYPTOPP_CFG} \
+    ${DISTRO_CFG} \
+    ${SIMD_CFG} \
+    -DBOOST_ROOT=/usr/local/boost \
+    ${BOOST_CFG} \
     ${SANITIZERS} \
     ..
+    
+    cmake --build ${PWD} -- -v
+    cmake --build ${PWD} -- install -v
+    cpack -G ${CPACK_TYPE} ${PWD}
+    sha1sum *.tar* > SHA1SUMS
+}
 
-
-if [[ "$OS" == 'Linux' ]]; then
-    cmake --build ${PWD} -- -j2
-else
-    sudo cmake --build ${PWD} -- -j2
-fi
-
-popd
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    TRUE_CMD=gtrue
-else
-    TRUE_CMD=true
-fi
-
-pushd load-tester
-cargo build --release
-popd
-cp ./load-tester/target/release/banano-load-tester ./build/load_test
-
-./ci/test.sh ./build || ${TRUE_CMD}
+run_build

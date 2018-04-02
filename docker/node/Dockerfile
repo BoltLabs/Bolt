@@ -17,19 +17,19 @@ RUN apt-get update -qq && apt-get install -yqq \
     rm -rf ${BOOST_BASENAME} && \
     rm -f ${BOOST_BASENAME}.tar.gz && \
     cd .. && \
-    mkdir /usr/share/banano/
+    mkdir /usr/share/bolt/
 
 ADD ./ /tmp/src
 
 RUN mkdir /tmp/build && \
     cd /tmp/build && \
     cmake /tmp/src -DBOOST_ROOT=${BOOST_ROOT} && \
-    make bananode && \
+    make bolt_node && \
     cd ..
 
 FROM ubuntu:16.04
-COPY --from=0 /tmp/build/bananode /usr/bin
+COPY --from=0 /tmp/build/bolt_node /usr/bin
 COPY docker/node/entry.sh /entry.sh
-COPY docker/node/config.json /usr/share/banano/config.json
+COPY docker/node/config.json /usr/share/bolt/config.json
 RUN chmod +x /entry.sh
 CMD ["/bin/bash",  "/entry.sh"]
