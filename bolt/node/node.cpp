@@ -811,12 +811,12 @@ lmdb_max_dbs (128)
 			preconfigured_representatives.push_back (rai::genesis_account);
 			break;
 		case rai::rai_networks::rai_beta_network:
-			preconfigured_peers.push_back ("peers.bolt.co.in");
-			preconfigured_representatives.push_back (rai::account ("1EA1F354847B9FABBD1EF16D95797D14C308185EC407D48F5CE93CE39C61A210"));
+			preconfigured_peers.push_back ("159.89.149.181");
+			preconfigured_representatives.push_back (rai::account ("A0A9E5FBAD71F1B91CCD55499AE1766B511C74231FE23A919B4F1AB1F0F82E48"));
 			break;
 		case rai::rai_networks::rai_live_network:
-			preconfigured_peers.push_back ("peers.bolt.co.in");
-			preconfigured_representatives.push_back (rai::account ("496DF07DCDEA2C29E8CF1B403D7F5C542863C052C24EFD8B7AF3A9B15E76E6A5"));
+			preconfigured_peers.push_back ("159.89.149.181");
+			preconfigured_representatives.push_back (rai::account ("7B3F3E72DDF569E43A23B65E2951D6F6B4D748D2D3FE3DB9484C2732198714F6"));
 			break;
 		default:
 			assert (false);
