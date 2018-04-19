@@ -3,14 +3,14 @@
     "rpc_enable": "true",
     "rpc": {
         "address": "::ffff:0.0.0.0",
-        "port": "7072",
+        "port": "7086",
         "enable_control": "true",
         "frontier_request_limit": "16384",
         "chain_request_limit": "16384"
     },
     "node": {
         "version": "8",
-        "peering_port": "7071",
+        "peering_port": "7085",
         "bootstrap_fraction_numerator": "1",
         "receive_minimum": "0",
         "logging": {
@@ -35,10 +35,10 @@
         },
         "work_peers": "",
         "preconfigured_peers": [
-            "peers.bolt.co.in"
+            "159.89.149.181"
         ],
         "preconfigured_representatives": [
-            "blt_1kdfy3ywutje79ney8t19ozoro3aeh177ikgzp7qowxbp7h9fso76xefe9gb",
+            "blt_1ysz9ssfuxdbwix49fky77axfxontx6f7nzy9pwnim398aerg79pigupakgt",
         ],
         "inactive_supply": "0",
         "password_fanout": "1024",
