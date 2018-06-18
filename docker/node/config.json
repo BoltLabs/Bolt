@@ -35,7 +35,7 @@
         },
         "work_peers": "",
         "preconfigured_peers": [
-            "159.89.149.181"
+            "peer.boltnode.org"
         ],
         "preconfigured_representatives": [
             "blt_1ysz9ssfuxdbwix49fky77axfxontx6f7nzy9pwnim398aerg79pigupakgt",
