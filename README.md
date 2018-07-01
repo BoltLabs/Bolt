@@ -29,7 +29,7 @@ For more information, see [Bolt.bz](https://bolt.bz/) or read the [whitepaper](h
 
 * [Community Run Website](https://bolt.bz)
 * [Newsletter](http://join.bolt.bz)
-* [Web Wallet](http://wallet.boltnode.org)
+* [Web Wallet](http://wallet.bolt.bz)
 * [Discord Chat](https://discord.gg/C9VRysG)
 * [Twitter](https://twitter.com/BoltToken)
 * [GitHub wiki](https://github.com/boltlabs/bolt/wiki)
