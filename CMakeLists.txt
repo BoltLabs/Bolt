@@ -1,14 +1,15 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (rai)
 
-set (CPACK_PACKAGE_VERSION_MAJOR "10")
-set (CPACK_PACKAGE_VERSION_MINOR "0")
-set (CPACK_PACKAGE_VERSION_PATCH "1")
+set (CPACK_PACKAGE_VERSION_MAJOR "14")
+set (CPACK_PACKAGE_VERSION_MINOR "2")
+set (CPACK_PACKAGE_VERSION_PATCH "0")
+if (DEFINED GIT_COMMIT)
+set (CPACK_PACKAGE_VERSION_PATCH "GIT-${GIT_COMMIT}")
+endif (DEFINED GIT_COMMIT)
+set (CPACK_PACKAGE_VENDOR "Nano Currency")
 
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-
-set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
 
 set (BOLT_GUI OFF CACHE BOOL "")
 set (BOLT_TEST OFF CACHE BOOL "")
@@ -297,6 +298,7 @@ add_library (bolt_lib_static STATIC ${RAI_LIB_SOURCES})
 add_library (node
 	${PLATFORM_NODE_SOURCE}
 	${SECURE_RPC_SOURCE}
+<<<<<<< HEAD
 	bolt/node/bootstrap.cpp
 	bolt/node/bootstrap.hpp
 	bolt/node/common.cpp
@@ -313,6 +315,26 @@ add_library (node
 	bolt/node/wallet.cpp
 	bolt/node/working.hpp
 	bolt/node/xorshift.hpp)
+=======
+	rai/node/bootstrap.cpp
+	rai/node/bootstrap.hpp
+	rai/node/common.cpp
+	rai/node/common.hpp
+	rai/node/node.hpp
+	rai/node/node.cpp
+	rai/node/openclwork.cpp
+	rai/node/openclwork.hpp
+	rai/node/rpc.hpp
+	rai/node/rpc.cpp
+	rai/node/testing.hpp
+	rai/node/testing.cpp
+	rai/node/wallet.hpp
+	rai/node/wallet.cpp
+	rai/node/stats.hpp
+	rai/node/stats.cpp
+	rai/node/working.hpp
+	rai/node/xorshift.hpp)
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf
 
 
 SET (ACTIVE_NETWORK rai_live_network CACHE STRING "Selects which network parameters are used")
@@ -420,6 +442,7 @@ target_link_libraries (bolt_node node secure lmdb ed25519 bolt_lib_static argon2
 set (CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/LICENSE)
 if (BOLT_GUI)
 	if (APPLE)
+<<<<<<< HEAD
 		get_filename_component (Qt5Core_framework_DIR ${Qt5_DIR}/../../QtCore.framework ABSOLUTE)
 		get_filename_component (Qt5Gui_framework_DIR ${Qt5_DIR}/../../QtGui.framework ABSOLUTE)
 		get_filename_component (Qt5PrintSupport_framework_DIR ${Qt5_DIR}/../../QtPrintSupport.framework ABSOLUTE)
@@ -470,6 +493,18 @@ if (BOLT_GUI)
 		install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/packaging/QtWidgets.framework" DESTINATION Bolt.app/Contents/Frameworks USE_SOURCE_PERMISSIONS)
 		install (FILES "${CMAKE_CURRENT_BINARY_DIR}/packaging/libqcocoa.dylib" DESTINATION Bolt.app/Contents/PlugIns/platforms PERMISSIONS OWNER_EXECUTE OWNER_READ)
 		install (FILES bolt.icns DESTINATION Bolt.app/Contents/Resources)
+=======
+		install (TARGETS nano_wallet DESTINATION Nano.app/Contents/MacOS)
+		install (FILES Info.plist DESTINATION Nano.app/Contents)
+		install (FILES qt.conf DESTINATION Nano.app/Contents/Resources)
+		install (DIRECTORY ${Qt5_DIR}/../../QtCore.framework DESTINATION Nano.app/Contents/Frameworks)
+		install (DIRECTORY ${Qt5_DIR}/../../QtGui.framework DESTINATION Nano.app/Contents/Frameworks)
+		install (DIRECTORY ${Qt5_DIR}/../../QtPrintSupport.framework DESTINATION Nano.app/Contents/Frameworks)
+		install (DIRECTORY ${Qt5_DIR}/../../QtTest.framework DESTINATION Nano.app/Contents/Frameworks)
+		install (DIRECTORY ${Qt5_DIR}/../../QtWidgets.framework DESTINATION Nano.app/Contents/Frameworks)
+		install (FILES "${Qt5_DIR}/../../../plugins/platforms/libqcocoa.dylib" DESTINATION Nano.app/Contents/PlugIns/platforms)
+		install (FILES RaiBlocks.icns DESTINATION Nano.app/Contents/Resources)
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf
 	elseif (WIN32)
 		if ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 			set (WIN_REDIST vc_redist.x64.exe)
@@ -477,12 +512,22 @@ if (BOLT_GUI)
 			set (WIN_REDIST vc_redist.x86.exe)
 		endif ()
 		set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\${WIN_REDIST}\\\" /quiet /norestart'")
+<<<<<<< HEAD
 		set (CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/bolt.ico)
 		set (CPACK_NSIS_DISPLAY_NAME "Bolt")
 		set (CPACK_NSIS_PACKAGE_NAME "Bolt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 		set (CPACK_NSIS_URL_INFO_ABOUT "https://bolt.co.in")
 		set (CPACK_NSIS_CONTACT "millsii3@bolt.co.in")
 		set (CPACK_NSIS_MENU_LINKS "bolt_wallet.exe" "Bolt Wallet" "https://bolt.co.in" "Bolt website")
+=======
+		set (CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/RaiBlocks.ico)
+		set (CPACK_NSIS_DISPLAY_NAME "Nano")
+		set (CPACK_PACKAGE_NAME "Nano_Installer")
+		set (CPACK_NSIS_PACKAGE_NAME "Nano ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+		set (CPACK_NSIS_URL_INFO_ABOUT "https://nano.org")
+		set (CPACK_NSIS_CONTACT "info@nano.org")
+		set (CPACK_NSIS_MENU_LINKS "nano_wallet.exe" "Nano Wallet" "https://nano.org" "Nano website")
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf
 		set (CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 		get_target_property (Qt5WindowsPlugin Qt5::QWindowsIntegrationPlugin LOCATION)
 		get_filename_component (Qt5_bin_DIR ${Qt5_DIR}/../../../bin ABSOLUTE)

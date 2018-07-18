@@ -15,7 +15,17 @@
 #include <cstring>
 
 extern "C" {
+<<<<<<< HEAD:bolt/lib/interface.cpp
 void blt_uint256_to_string (blt_uint256 source, char * destination)
+=======
+void xrb_uint128_to_dec (xrb_uint128 source, char * destination)
+{
+	auto const & number (*reinterpret_cast<rai::uint128_union *> (source));
+	strncpy (destination, number.to_string_dec ().c_str (), 32);
+}
+
+void xrb_uint256_to_string (xrb_uint256 source, char * destination)
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/lib/interface.cpp
 {
 	auto const & number (*reinterpret_cast<rai::uint256_union *> (source));
 	strncpy (destination, number.to_string ().c_str (), 64);
@@ -33,7 +43,18 @@ void blt_uint512_to_string (blt_uint512 source, char * destination)
 	strncpy (destination, number.to_string ().c_str (), 128);
 }
 
+<<<<<<< HEAD:bolt/lib/interface.cpp
 int blt_uint256_from_string (const char * source, blt_uint256 destination)
+=======
+int xrb_uint128_from_dec (const char * source, xrb_uint128 destination)
+{
+	auto & number (*reinterpret_cast<rai::uint128_union *> (destination));
+	auto error (number.decode_dec (source));
+	return error ? 1 : 0;
+}
+
+int xrb_uint256_from_string (const char * source, xrb_uint256 destination)
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/lib/interface.cpp
 {
 	auto & number (*reinterpret_cast<rai::uint256_union *> (destination));
 	auto error (number.decode_hex (source));
