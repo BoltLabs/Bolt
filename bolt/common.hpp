@@ -23,6 +23,10 @@ struct hash<rai::uint256_union>
 }
 namespace rai
 {
+const uint8_t protocol_version = 0x0b;
+const uint8_t protocol_version_min = 0x07;
+const uint8_t node_id_version = 0x0b;
+
 class block_store;
 /**
  * Determine the balance as of this block
@@ -37,10 +41,12 @@ public:
 	void receive_block (rai::receive_block const &) override;
 	void open_block (rai::open_block const &) override;
 	void change_block (rai::change_block const &) override;
+	void state_block (rai::state_block const &) override;
 	MDB_txn * transaction;
 	rai::block_store & store;
-	rai::block_hash current;
-	rai::uint128_t result;
+	rai::block_hash current_balance;
+	rai::block_hash current_amount;
+	rai::uint128_t balance;
 };
 
 /**
@@ -56,10 +62,13 @@ public:
 	void receive_block (rai::receive_block const &) override;
 	void open_block (rai::open_block const &) override;
 	void change_block (rai::change_block const &) override;
+	void state_block (rai::state_block const &) override;
 	void from_send (rai::block_hash const &);
 	MDB_txn * transaction;
 	rai::block_store & store;
-	rai::uint128_t result;
+	rai::block_hash current_amount;
+	rai::block_hash current_balance;
+	rai::uint128_t amount;
 };
 
 /**
@@ -75,6 +84,7 @@ public:
 	void receive_block (rai::receive_block const & block_a) override;
 	void open_block (rai::open_block const & block_a) override;
 	void change_block (rai::change_block const & block_a) override;
+	void state_block (rai::state_block const & block_a) override;
 	MDB_txn * transaction;
 	rai::block_store & store;
 	rai::block_hash current;
@@ -90,6 +100,7 @@ class keypair
 public:
 	keypair ();
 	keypair (std::string const &);
+	keypair (rai::raw_key &&);
 	rai::public_key pub;
 	rai::raw_key prv;
 };
@@ -121,7 +132,7 @@ public:
 };
 
 /**
- * Information on an uncollected send, source account, amount, target account.
+ * Information on an uncollected send
  */
 class pending_info
 {
@@ -170,6 +181,7 @@ public:
 	size_t receive;
 	size_t open;
 	size_t change;
+	size_t state;
 };
 class vote
 {
@@ -185,6 +197,8 @@ public:
 	bool operator!= (rai::vote const &) const;
 	void serialize (rai::stream &, rai::block_type);
 	void serialize (rai::stream &);
+	bool deserialize (rai::stream &);
+	bool validate ();
 	std::string to_json () const;
 	// Vote round sequence number
 	uint64_t sequence;
@@ -200,12 +214,6 @@ enum class vote_code
 	replay, // Vote does not have the highest sequence number, it's a replay
 	vote // Vote has the highest sequence number
 };
-class vote_result
-{
-public:
-	rai::vote_code code;
-	std::shared_ptr<rai::vote> vote;
-};
 
 enum class process_result
 {
@@ -217,9 +225,9 @@ enum class process_result
 	unreceivable, // Source block doesn't exist or has already been received
 	gap_previous, // Block marked as previous is unknown
 	gap_source, // Block marked as source is unknown
-	not_receive_from_send, // Receive does not have a send source
-	account_mismatch, // Account number in open block doesn't match send destination
-	opened_burn_account // The impossible happened, someone found the private key associated with the public key '0'.
+	opened_burn_account, // The impossible happened, someone found the private key associated with the public key '0'.
+	balance_mismatch, // Balance and amount delta don't match
+	block_position // This block cannot follow the previous block
 };
 class process_return
 {
@@ -228,6 +236,7 @@ public:
 	rai::account account;
 	rai::amount amount;
 	rai::account pending_account;
+	boost::optional<bool> state_is_send;
 };
 enum class tally_result
 {
@@ -240,6 +249,7 @@ class votes
 public:
 	votes (std::shared_ptr<rai::block>);
 	rai::tally_result vote (std::shared_ptr<rai::vote>);
+	bool uncontested ();
 	// Root block of fork
 	rai::block_hash id;
 	// All votes received by account

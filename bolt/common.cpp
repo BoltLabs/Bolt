@@ -14,10 +14,17 @@
 // Genesis keys for network variants
 namespace
 {
+<<<<<<< HEAD:bolt/common.cpp
 char const * test_private_key_data = "9AA679313EAB1343831D3E63306D963A0F353675597D1C367874D46AC031D4A0";
 char const * test_public_key_data = "D39C0C08D03417F12D8634A7E7C173815738EBB87DC6E5D400611F50C849A560"; // blt_3nww3i6f1f1qy6pref79wz1q91cq95ouizg8wqc11razc566mbd1wkjuf4w7
 char const * beta_public_key_data = "A0A9E5FBAD71F1B91CCD55499AE1766B511C74231FE23A919B4F1AB1F0F82E48"; // blt_3a7bwqxttwhjq6getocbmdiqettj5jt489z49caspmrtp9rhidkaxdxiro4b
 char const * live_public_key_data = "7B3F3E72DDF569E43A23B65E2951D6F6B4D748D2D3FE3DB9484C2732198714F6"; // blt_1ysz9ssfuxdbwix49fky77axfxontx6f7nzy9pwnim398aerg79pigupakgt
+=======
+char const * test_private_key_data = "34F0A37AAD20F4A260F0A5B3CB3D7FB50673212263E58A380BC10474BB039CE4";
+char const * test_public_key_data = "B0311EA55708D6A53C75CDBF88300259C6D018522FE3D4D0A242E431F9E8B6D0"; // xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpiij4txtdo
+char const * beta_public_key_data = "0311B25E0D1E1D7724BBA5BD523954F1DBCFC01CB8671D55ED2D32C7549FB252"; // xrb_11rjpbh1t9ixgwkdqbfxcawobwgusz13sg595ocytdbkrxcbzekkcqkc3dn1
+char const * live_public_key_data = "E89208DD038FBB269987689621D52292AE9C35941A7484756ECCED92A65093BA"; // xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/common.cpp
 char const * test_genesis_data = R"%%%({
     "type": "open",
     "source": "D39C0C08D03417F12D8634A7E7C173815738EBB87DC6E5D400611F50C849A560",
@@ -28,12 +35,21 @@ char const * test_genesis_data = R"%%%({
 })%%%";
 
 char const * beta_genesis_data = R"%%%({
+<<<<<<< HEAD:bolt/common.cpp
     "type": "open",
     "source": "A0A9E5FBAD71F1B91CCD55499AE1766B511C74231FE23A919B4F1AB1F0F82E48",
     "representative": "blt_3a7bwqxttwhjq6getocbmdiqettj5jt489z49caspmrtp9rhidkaxdxiro4b",
     "account": "blt_3a7bwqxttwhjq6getocbmdiqettj5jt489z49caspmrtp9rhidkaxdxiro4b",
     "work": "37d04a3adf7a3012",
     "signature": "ED462A118E1B5FBDD76F894B47EE01901E86E179748C1C917A4212574108E4FEF9B58AE343DDE065CEAB0479DCC5E15F9B06526BE521D4CC4F06879B091AD108"
+=======
+	"type": "open",
+	"source": "0311B25E0D1E1D7724BBA5BD523954F1DBCFC01CB8671D55ED2D32C7549FB252",
+	"representative": "xrb_11rjpbh1t9ixgwkdqbfxcawobwgusz13sg595ocytdbkrxcbzekkcqkc3dn1",
+	"account": "xrb_11rjpbh1t9ixgwkdqbfxcawobwgusz13sg595ocytdbkrxcbzekkcqkc3dn1",
+	"work": "869e17b2bfa36639",
+	"signature": "34DF447C7F185673128C3516A657DFEC7906F16C68FB5A8879432E2E4FB908C8ED0DD24BBECFAB3C7852898231544A421DC8CB636EF66C82E1245083EB08EA0F"
+>>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/common.cpp
 })%%%";
 
 char const * live_genesis_data = R"%%%({
@@ -89,6 +105,7 @@ size_t constexpr rai::send_block::size;
 size_t constexpr rai::receive_block::size;
 size_t constexpr rai::open_block::size;
 size_t constexpr rai::change_block::size;
+size_t constexpr rai::state_block::size;
 
 rai::keypair const & rai::zero_key (globals.zero_key);
 rai::keypair const & rai::test_genesis_key (globals.test_genesis_key);
@@ -139,10 +156,31 @@ rai::tally_result rai::votes::vote (std::shared_ptr<rai::vote> vote_a)
 	return result;
 }
 
+bool rai::votes::uncontested ()
+{
+	bool result (true);
+	if (!rep_votes.empty ())
+	{
+		auto block (rep_votes.begin ()->second);
+		for (auto i (rep_votes.begin ()), n (rep_votes.end ()); result && i != n; ++i)
+		{
+			result = *i->second == *block;
+		}
+	}
+	return result;
+}
+
 // Create a new random keypair
 rai::keypair::keypair ()
 {
 	random_pool.GenerateBlock (prv.data.bytes.data (), prv.data.bytes.size ());
+	ed25519_publickey (prv.data.bytes.data (), pub.bytes.data ());
+}
+
+// Create a keypair given a private key
+rai::keypair::keypair (rai::raw_key && prv_a) :
+prv (std::move (prv_a))
+{
 	ed25519_publickey (prv.data.bytes.data (), pub.bytes.data ());
 }
 
@@ -249,13 +287,14 @@ rai::block_counts::block_counts () :
 send (0),
 receive (0),
 open (0),
-change (0)
+change (0),
+state (0)
 {
 }
 
 size_t rai::block_counts::sum ()
 {
-	return send + receive + open + change;
+	return send + receive + open + change + state;
 }
 
 rai::pending_info::pending_info () :
@@ -411,63 +450,84 @@ std::string rai::vote::to_json () const
 
 rai::amount_visitor::amount_visitor (MDB_txn * transaction_a, rai::block_store & store_a) :
 transaction (transaction_a),
-store (store_a)
+store (store_a),
+current_amount (0),
+current_balance (0),
+amount (0)
 {
 }
 
 void rai::amount_visitor::send_block (rai::send_block const & block_a)
 {
-	balance_visitor prev (transaction, store);
-	prev.compute (block_a.hashables.previous);
-	result = prev.result - block_a.hashables.balance.number ();
+	current_balance = block_a.hashables.previous;
+	amount = block_a.hashables.balance.number ();
+	current_amount = 0;
 }
 
 void rai::amount_visitor::receive_block (rai::receive_block const & block_a)
 {
-	from_send (block_a.hashables.source);
+	current_amount = block_a.hashables.source;
 }
 
 void rai::amount_visitor::open_block (rai::open_block const & block_a)
 {
 	if (block_a.hashables.source != rai::genesis_account)
 	{
-		from_send (block_a.hashables.source);
+		current_amount = block_a.hashables.source;
 	}
 	else
 	{
-		result = rai::genesis_amount;
+		amount = rai::genesis_amount;
+		current_amount = 0;
 	}
+}
+
+void rai::amount_visitor::state_block (rai::state_block const & block_a)
+{
+	current_balance = block_a.hashables.previous;
+	amount = block_a.hashables.balance.number ();
+	current_amount = 0;
 }
 
 void rai::amount_visitor::change_block (rai::change_block const & block_a)
 {
-	result = 0;
-}
-
-void rai::amount_visitor::from_send (rai::block_hash const & hash_a)
-{
-	auto source_block (store.block_get (transaction, hash_a));
-	assert (source_block != nullptr);
-	source_block->visit (*this);
+	amount = 0;
+	current_amount = 0;
 }
 
 void rai::amount_visitor::compute (rai::block_hash const & block_hash)
 {
-	auto block (store.block_get (transaction, block_hash));
-	if (block != nullptr)
+	current_amount = block_hash;
+	while (!current_amount.is_zero () || !current_balance.is_zero ())
 	{
-		block->visit (*this);
-	}
-	else
-	{
-		if (block_hash == rai::genesis_account)
+		if (!current_amount.is_zero ())
 		{
-			result = std::numeric_limits<rai::uint128_t>::max ();
+			auto block (store.block_get (transaction, current_amount));
+			if (block != nullptr)
+			{
+				block->visit (*this);
+			}
+			else
+			{
+				if (block_hash == rai::genesis_account)
+				{
+					amount = std::numeric_limits<rai::uint128_t>::max ();
+					current_amount = 0;
+				}
+				else
+				{
+					assert (false);
+					amount = 0;
+					current_amount = 0;
+				}
+			}
 		}
 		else
 		{
-			assert (false);
-			result = 0;
+			balance_visitor prev (transaction, store);
+			prev.compute (current_balance);
+			amount = amount < prev.balance ? prev.balance - amount : amount - prev.balance;
+			current_balance = 0;
 		}
 	}
 }
@@ -475,40 +535,37 @@ void rai::amount_visitor::compute (rai::block_hash const & block_hash)
 rai::balance_visitor::balance_visitor (MDB_txn * transaction_a, rai::block_store & store_a) :
 transaction (transaction_a),
 store (store_a),
-current (0),
-result (0)
+current_balance (0),
+current_amount (0),
+balance (0)
 {
 }
 
 void rai::balance_visitor::send_block (rai::send_block const & block_a)
 {
-	result += block_a.hashables.balance.number ();
-	current = 0;
+	balance += block_a.hashables.balance.number ();
+	current_balance = 0;
 }
 
 void rai::balance_visitor::receive_block (rai::receive_block const & block_a)
 {
-	amount_visitor source (transaction, store);
-	source.compute (block_a.hashables.source);
 	rai::block_info block_info;
 	if (!store.block_info_get (transaction, block_a.hash (), block_info))
 	{
-		result += block_info.balance.number ();
-		current = 0;
+		balance += block_info.balance.number ();
+		current_balance = 0;
 	}
 	else
 	{
-		result += source.result;
-		current = block_a.hashables.previous;
+		current_amount = block_a.hashables.source;
+		current_balance = block_a.hashables.previous;
 	}
 }
 
 void rai::balance_visitor::open_block (rai::open_block const & block_a)
 {
-	amount_visitor source (transaction, store);
-	source.compute (block_a.hashables.source);
-	result += source.result;
-	current = 0;
+	current_amount = block_a.hashables.source;
+	current_balance = 0;
 }
 
 void rai::balance_visitor::change_block (rai::change_block const & block_a)
@@ -516,23 +573,39 @@ void rai::balance_visitor::change_block (rai::change_block const & block_a)
 	rai::block_info block_info;
 	if (!store.block_info_get (transaction, block_a.hash (), block_info))
 	{
-		result += block_info.balance.number ();
-		current = 0;
+		balance += block_info.balance.number ();
+		current_balance = 0;
 	}
 	else
 	{
-		current = block_a.hashables.previous;
+		current_balance = block_a.hashables.previous;
 	}
+}
+
+void rai::balance_visitor::state_block (rai::state_block const & block_a)
+{
+	balance = block_a.hashables.balance.number ();
+	current_balance = 0;
 }
 
 void rai::balance_visitor::compute (rai::block_hash const & block_hash)
 {
-	current = block_hash;
-	while (!current.is_zero ())
+	current_balance = block_hash;
+	while (!current_balance.is_zero () || !current_amount.is_zero ())
 	{
-		auto block (store.block_get (transaction, current));
-		assert (block != nullptr);
-		block->visit (*this);
+		if (!current_amount.is_zero ())
+		{
+			amount_visitor source (transaction, store);
+			source.compute (current_amount);
+			balance += source.amount;
+			current_amount = 0;
+		}
+		else
+		{
+			auto block (store.block_get (transaction, current_balance));
+			assert (block != nullptr);
+			block->visit (*this);
+		}
 	}
 }
 
@@ -570,6 +643,11 @@ void rai::representative_visitor::open_block (rai::open_block const & block_a)
 }
 
 void rai::representative_visitor::change_block (rai::change_block const & block_a)
+{
+	result = block_a.hash ();
+}
+
+void rai::representative_visitor::state_block (rai::state_block const & block_a)
 {
 	result = block_a.hash ();
 }
@@ -676,6 +754,31 @@ void rai::vote::serialize (rai::stream & stream_a)
 	write (stream_a, signature);
 	write (stream_a, sequence);
 	rai::serialize_block (stream_a, *block);
+}
+
+bool rai::vote::deserialize (rai::stream & stream_a)
+{
+	auto result (read (stream_a, account));
+	if (!result)
+	{
+		result = read (stream_a, signature);
+		if (!result)
+		{
+			result = read (stream_a, sequence);
+			if (!result)
+			{
+				block = rai::deserialize_block (stream_a, block_type ());
+				result = block == nullptr;
+			}
+		}
+	}
+	return result;
+}
+
+bool rai::vote::validate ()
+{
+	auto result (rai::validate_message (account, hash (), signature));
+	return result;
 }
 
 rai::genesis::genesis ()
