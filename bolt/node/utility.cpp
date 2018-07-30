@@ -13,13 +13,13 @@ boost::filesystem::path rai::working_path ()
 	auto result (rai::app_path ());
 	switch (rai::rai_network)
 	{
-		case rai::rai_networks::rai_test_network:
+		case rai::rai_networks::bolt_test_network:
 			result /= "BoltTest";
 			break;
-		case rai::rai_networks::rai_beta_network:
+		case rai::rai_networks::bolt_beta_network:
 			result /= "BoltBeta";
 			break;
-		case rai::rai_networks::rai_live_network:
+		case rai::rai_networks::bolt_live_network:
 			result /= "Bolt";
 			break;
 	}

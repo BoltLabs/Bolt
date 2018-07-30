@@ -14,17 +14,10 @@
 // Genesis keys for network variants
 namespace
 {
-<<<<<<< HEAD:bolt/common.cpp
 char const * test_private_key_data = "9AA679313EAB1343831D3E63306D963A0F353675597D1C367874D46AC031D4A0";
 char const * test_public_key_data = "D39C0C08D03417F12D8634A7E7C173815738EBB87DC6E5D400611F50C849A560"; // blt_3nww3i6f1f1qy6pref79wz1q91cq95ouizg8wqc11razc566mbd1wkjuf4w7
 char const * beta_public_key_data = "A0A9E5FBAD71F1B91CCD55499AE1766B511C74231FE23A919B4F1AB1F0F82E48"; // blt_3a7bwqxttwhjq6getocbmdiqettj5jt489z49caspmrtp9rhidkaxdxiro4b
 char const * live_public_key_data = "7B3F3E72DDF569E43A23B65E2951D6F6B4D748D2D3FE3DB9484C2732198714F6"; // blt_1ysz9ssfuxdbwix49fky77axfxontx6f7nzy9pwnim398aerg79pigupakgt
-=======
-char const * test_private_key_data = "34F0A37AAD20F4A260F0A5B3CB3D7FB50673212263E58A380BC10474BB039CE4";
-char const * test_public_key_data = "B0311EA55708D6A53C75CDBF88300259C6D018522FE3D4D0A242E431F9E8B6D0"; // xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpiij4txtdo
-char const * beta_public_key_data = "0311B25E0D1E1D7724BBA5BD523954F1DBCFC01CB8671D55ED2D32C7549FB252"; // xrb_11rjpbh1t9ixgwkdqbfxcawobwgusz13sg595ocytdbkrxcbzekkcqkc3dn1
-char const * live_public_key_data = "E89208DD038FBB269987689621D52292AE9C35941A7484756ECCED92A65093BA"; // xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/common.cpp
 char const * test_genesis_data = R"%%%({
     "type": "open",
     "source": "D39C0C08D03417F12D8634A7E7C173815738EBB87DC6E5D400611F50C849A560",
@@ -35,21 +28,12 @@ char const * test_genesis_data = R"%%%({
 })%%%";
 
 char const * beta_genesis_data = R"%%%({
-<<<<<<< HEAD:bolt/common.cpp
     "type": "open",
     "source": "A0A9E5FBAD71F1B91CCD55499AE1766B511C74231FE23A919B4F1AB1F0F82E48",
     "representative": "blt_3a7bwqxttwhjq6getocbmdiqettj5jt489z49caspmrtp9rhidkaxdxiro4b",
     "account": "blt_3a7bwqxttwhjq6getocbmdiqettj5jt489z49caspmrtp9rhidkaxdxiro4b",
     "work": "37d04a3adf7a3012",
     "signature": "ED462A118E1B5FBDD76F894B47EE01901E86E179748C1C917A4212574108E4FEF9B58AE343DDE065CEAB0479DCC5E15F9B06526BE521D4CC4F06879B091AD108"
-=======
-	"type": "open",
-	"source": "0311B25E0D1E1D7724BBA5BD523954F1DBCFC01CB8671D55ED2D32C7549FB252",
-	"representative": "xrb_11rjpbh1t9ixgwkdqbfxcawobwgusz13sg595ocytdbkrxcbzekkcqkc3dn1",
-	"account": "xrb_11rjpbh1t9ixgwkdqbfxcawobwgusz13sg595ocytdbkrxcbzekkcqkc3dn1",
-	"work": "869e17b2bfa36639",
-	"signature": "34DF447C7F185673128C3516A657DFEC7906F16C68FB5A8879432E2E4FB908C8ED0DD24BBECFAB3C7852898231544A421DC8CB636EF66C82E1245083EB08EA0F"
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/common.cpp
 })%%%";
 
 char const * live_genesis_data = R"%%%({
@@ -73,8 +57,8 @@ public:
 	rai_test_genesis (test_genesis_data),
 	rai_beta_genesis (beta_genesis_data),
 	rai_live_genesis (live_genesis_data),
-	genesis_account (rai::rai_network == rai::rai_networks::rai_test_network ? rai_test_account : rai::rai_network == rai::rai_networks::rai_beta_network ? rai_beta_account : rai_live_account),
-	genesis_block (rai::rai_network == rai::rai_networks::rai_test_network ? rai_test_genesis : rai::rai_network == rai::rai_networks::rai_beta_network ? rai_beta_genesis : rai_live_genesis),
+	genesis_account (rai::rai_network == rai::rai_networks::bolt_test_network ? rai_test_account : rai::rai_network == rai::rai_networks::bolt_beta_network ? rai_beta_account : rai_live_account),
+	genesis_block (rai::rai_network == rai::rai_networks::bolt_test_network ? rai_test_genesis : rai::rai_network == rai::rai_networks::bolt_beta_network ? rai_beta_genesis : rai_live_genesis),
 	genesis_amount (std::numeric_limits<rai::uint128_t>::max ()),
 	burn_account (0)
 	{

@@ -155,11 +155,7 @@ public:
 	void block_type_set (rai::block_type);
 	bool ipv4_only ();
 	void ipv4_only_set (bool);
-<<<<<<< HEAD:bolt/node/common.hpp
-	static std::array<uint8_t, 2> constexpr magic_number = rai::rai_network == rai::rai_networks::rai_test_network ? std::array<uint8_t, 2> ({ 'R', 'Z' }) : rai::rai_network == rai::rai_networks::rai_beta_network ? std::array<uint8_t, 2> ({ 'R', 'Y' }) : std::array<uint8_t, 2> ({ 'R', 'X' });
-=======
-	static std::array<uint8_t, 2> constexpr magic_number = rai::rai_network == rai::rai_networks::rai_test_network ? std::array<uint8_t, 2>{ { 'R', 'A' } } : rai::rai_network == rai::rai_networks::rai_beta_network ? std::array<uint8_t, 2>{ { 'R', 'B' } } : std::array<uint8_t, 2>{ { 'R', 'C' } };
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/node/common.hpp
+	static std::array<uint8_t, 2> constexpr magic_number = rai::rai_network == rai::rai_networks::bolt_test_network ? std::array<uint8_t, 2> ({ 'R', 'Z' }) : rai::rai_network == rai::rai_networks::bolt_beta_network ? std::array<uint8_t, 2> ({ 'R', 'Y' }) : std::array<uint8_t, 2> ({ 'R', 'X' });
 	uint8_t version_max;
 	uint8_t version_using;
 	uint8_t version_min;

@@ -78,18 +78,14 @@ bool rai::uint256_union::decode_account (std::string const & source_a)
 	auto error (source_a.size () < 5);
 	if (!error)
 	{
-<<<<<<< HEAD:bolt/lib/numbers.cpp
-		if (source_a[0] == 'b' && source_a[1] == 'l' && source_a[2] == 't' && (source_a[3] == '_' || source_a[3] == '-'))
-=======
-		auto xrb_prefix (source_a[0] == 'x' && source_a[1] == 'r' && source_a[2] == 'b' && (source_a[3] == '_' || source_a[3] == '-'));
-		auto nano_prefix (source_a[0] == 'n' && source_a[1] == 'a' && source_a[2] == 'n' && source_a[3] == 'o' && (source_a[4] == '_' || source_a[4] == '-'));
-		error = (xrb_prefix && source_a.size () != 64) || (nano_prefix && source_a.size () != 65);
+		auto blt_prefix (source_a[0] == 'b' && source_a[1] == 'l' && source_a[2] == 't' && (source_a[3] == '_' || source_a[3] == '-'));
+		auto bolt_prefix (source_a[0] == 'b' && source_a[1] == 'o' && source_a[2] == 'l' && source_a[3] == 't' && (source_a[4] == '_' || source_a[4] == '-'));
+		error = (blt_prefix && source_a.size () != 64) || (bolt_prefix && source_a.size () != 65);
 		if (!error)
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/lib/numbers.cpp
 		{
-			if (xrb_prefix || nano_prefix)
+			if (blt_prefix || bolt_prefix)
 			{
-				auto i (source_a.begin () + (xrb_prefix ? 4 : 5));
+				auto i (source_a.begin () + (blt_prefix ? 4 : 5));
 				if (*i == '1' || *i == '3')
 				{
 					rai::uint512_t number_l;

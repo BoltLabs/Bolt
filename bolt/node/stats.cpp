@@ -4,7 +4,7 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <rai/node/stats.hpp>
+#include <bolt/node/stats.hpp>
 #include <sstream>
 #include <tuple>
 

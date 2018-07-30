@@ -61,7 +61,7 @@ window (new QWidget),
 layout (new QVBoxLayout),
 self_layout (new QHBoxLayout),
 self_window (new QWidget),
-your_account_label (new QLabel ("Your Nano account:")),
+your_account_label (new QLabel ("Your Bolt account:")),
 account_window (new QWidget),
 account_layout (new QHBoxLayout),
 account_text (new QLineEdit),
@@ -934,7 +934,7 @@ std::string rai_qt::status::color ()
 }
 
 rai_qt::wallet::wallet (QApplication & application_a, rai_qt::eventloop_processor & processor_a, rai::node & node_a, std::shared_ptr<rai::wallet> wallet_a, rai::account & account_a) :
-rendering_ratio (rai::BLT_ratio),
+rendering_ratio (rai::blt_ratio),
 node (node_a),
 wallet_m (wallet_a),
 account (account_a),
@@ -1375,11 +1375,11 @@ std::string rai_qt::wallet::format_balance (rai::uint128_t const & balance) cons
 {
 	auto balance_str = rai::amount (balance).format_balance (rendering_ratio, 0, false);
 	auto unit = std::string ("BOLT");
-	if (rendering_ratio == rai::mBLT_ratio)
+	if (rendering_ratio == rai::mblt_ratio)
 	{
 		unit = std::string ("mBLT");
 	}
-	else if (rendering_ratio == rai::BLT_ratio)
+	else if (rendering_ratio == rai::blt_ratio)
 	{
 		unit = std::string ("bltoshi");
 	}
@@ -1741,19 +1741,19 @@ wallet (wallet_a)
 	QObject::connect (blt, &QRadioButton::toggled, [this]() {
 		if (blt->isChecked ())
 		{
-			this->wallet.change_rendering_ratio (rai::BLT_ratio);
+			this->wallet.change_rendering_ratio (rai::blt_ratio);
 		}
 	});
 	QObject::connect (mblt, &QRadioButton::toggled, [this]() {
 		if (mblt->isChecked ())
 		{
-			this->wallet.change_rendering_ratio (rai::mBLT_ratio);
+			this->wallet.change_rendering_ratio (rai::mblt_ratio);
 		}
 	});
 	QObject::connect (ublt, &QRadioButton::toggled, [this]() {
 		if (ublt->isChecked ())
 		{
-			this->wallet.change_rendering_ratio (rai::uBLT_ratio);
+			this->wallet.change_rendering_ratio (rai::ublt_ratio);
 		}
 	});
 	blt->click ();

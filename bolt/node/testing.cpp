@@ -1,13 +1,8 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-<<<<<<< HEAD:bolt/node/testing.cpp
+#include <cstdlib>
 #include <bolt/node/common.hpp>
 #include <bolt/node/testing.hpp>
-=======
-#include <cstdlib>
-#include <rai/node/common.hpp>
-#include <rai/node/testing.hpp>
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/node/testing.cpp
 
 rai::system::system (uint16_t port_a, size_t count_a) :
 alarm (service),

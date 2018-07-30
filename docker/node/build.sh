@@ -38,9 +38,6 @@ esac
 REPO_ROOT=`git rev-parse --show-toplevel`
 COMMIT_SHA=`git rev-parse --short HEAD`
 pushd $REPO_ROOT
-<<<<<<< HEAD
-docker build -f docker/node/Dockerfile -t bolt-node:latest .
-=======
-docker build --build-arg NETWORK="${network}" -f docker/node/Dockerfile -t raiblocks-node${network_tag}:latest .
+docker build --build-arg NETWORK="${network}" -f docker/node/Dockerfile -t bolt-node${network_tag}:latest .
 >>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf
 popd

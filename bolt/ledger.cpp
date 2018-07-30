@@ -1,13 +1,7 @@
-<<<<<<< HEAD:bolt/ledger.cpp
 #include <bolt/blockstore.hpp>
 #include <bolt/ledger.hpp>
 #include <bolt/node/common.hpp>
-=======
-#include <rai/blockstore.hpp>
-#include <rai/ledger.hpp>
-#include <rai/node/common.hpp>
-#include <rai/node/stats.hpp>
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/ledger.cpp
+#include <bolt/node/stats.hpp>
 
 namespace
 {

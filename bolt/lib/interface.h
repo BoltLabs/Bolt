@@ -5,19 +5,13 @@
 extern "C" {
 #endif
 
-<<<<<<< HEAD:bolt/lib/interface.h
+typedef unsigned char * blt_uint128; // 16byte array for public and private keys
 typedef unsigned char * blt_uint256; // 32byte array for public and private keys
 typedef unsigned char * blt_uint512; // 64byte array for signatures
 typedef void * blt_transaction;
-=======
-typedef unsigned char * xrb_uint128; // 16byte array for public and private keys
-typedef unsigned char * xrb_uint256; // 32byte array for public and private keys
-typedef unsigned char * xrb_uint512; // 64byte array for signatures
-typedef void * xrb_transaction;
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/lib/interface.h
 
 // Convert amount bytes 'source' to a 39 byte not-null-terminated decimal string 'destination'
-void xrb_uint128_to_dec (const xrb_uint128 source, char * destination);
+void blt_uint128_to_dec (const blt_uint128 source, char * destination);
 // Convert public/private key bytes 'source' to a 64 byte not-null-terminated hex string 'destination'
 void blt_uint256_to_string (const blt_uint256 source, char * destination);
 // Convert public key bytes 'source' to a 65 byte non-null-terminated account string 'destination'
@@ -27,7 +21,7 @@ void blt_uint512_to_string (const blt_uint512 source, char * destination);
 
 // Convert 39 byte decimal string 'source' to a byte array 'destination'
 // Return 0 on success, nonzero on error
-int xrb_uint128_from_dec (const char * source, xrb_uint128 destination);
+int blt_uint128_from_dec (const char * source, blt_uint128 destination);
 // Convert 64 byte hex string 'source' to a byte array 'destination'
 // Return 0 on success, nonzero on error
 int blt_uint256_from_string (const char * source, blt_uint256 destination);

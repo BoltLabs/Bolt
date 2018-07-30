@@ -75,7 +75,7 @@ public:
 	rai::rpc_config config;
 	rai::node & node;
 	bool on;
-	static uint16_t const rpc_port = rai::rai_network == rai::rai_networks::rai_live_network ? 7086 : 55001;
+	static uint16_t const rpc_port = rai::rai_network == rai::rai_networks::bolt_live_network ? 7086 : 55001;
 };
 class rpc_connection : public std::enable_shared_from_this<rai::rpc_connection>
 {

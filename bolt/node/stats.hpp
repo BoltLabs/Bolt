@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
-#include <rai/lib/utility.hpp>
+#include <bolt/lib/utility.hpp>
 #include <string>
 #include <unordered_map>
 

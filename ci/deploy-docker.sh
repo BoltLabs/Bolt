@@ -3,11 +3,11 @@ set -e
 
 scripts="$(dirname "$0")"
 
-docker login -u nanocurrency -p "$DOCKER_PASSWORD"
+docker login -u boltcurrency -p "$DOCKER_PASSWORD"
 
 # We push this just so it can be a cache next time
 if [ "$TRAVIS_BRANCH" = "master" ]; then
-    "$scripts"/custom-timeout.sh 30 docker push nanocurrency/nano-ci
+    "$scripts"/custom-timeout.sh 30 docker push boltcurrency/bolt-ci
 fi
 
 tags=()
@@ -24,7 +24,7 @@ for network in live beta; do
         network_tag_suffix="-${network}"
     fi
 
-    docker_image_name="nanocurrency/nano${network_tag_suffix}"
+    docker_image_name="boltcurrency/bolt${network_tag_suffix}"
 
     "$scripts"/custom-timeout.sh 30 docker build --build-arg NETWORK="$network" -f docker/node/Dockerfile -t "$docker_image_name" .
     for tag in "${tags[@]}"; do

@@ -2103,7 +2103,7 @@ void rai::rpc_handler::blt_from_raw ()
 	rai::uint128_union amount;
 	if (!amount.decode_dec (amount_text))
 	{
-		auto result (amount.number () / rai::BLT_ratio);
+		auto result (amount.number () / rai::blt_ratio);
 		boost::property_tree::ptree response_l;
 		response_l.put ("amount", result.convert_to<std::string> ());
 		response (response_l);
@@ -2120,7 +2120,7 @@ void rai::rpc_handler::blt_to_raw ()
 	rai::uint128_union amount;
 	if (!amount.decode_dec (amount_text))
 	{
-		auto result (amount.number () * rai::BLT_ratio);
+		auto result (amount.number () * rai::blt_ratio);
 		if (result > amount.number ())
 		{
 			boost::property_tree::ptree response_l;
@@ -2144,7 +2144,7 @@ void rai::rpc_handler::mblt_from_raw ()
 	rai::uint128_union amount;
 	if (!amount.decode_dec (amount_text))
 	{
-		auto result (amount.number () / rai::mBLT_ratio);
+		auto result (amount.number () / rai::mblt_ratio);
 		boost::property_tree::ptree response_l;
 		response_l.put ("amount", result.convert_to<std::string> ());
 		response (response_l);
@@ -2161,7 +2161,7 @@ void rai::rpc_handler::mblt_to_raw ()
 	rai::uint128_union amount;
 	if (!amount.decode_dec (amount_text))
 	{
-		auto result (amount.number () * rai::mBLT_ratio);
+		auto result (amount.number () * rai::mblt_ratio);
 		if (result > amount.number ())
 		{
 			boost::property_tree::ptree response_l;
@@ -2686,7 +2686,7 @@ void rai::rpc_handler::ublt_from_raw ()
 	rai::uint128_union amount;
 	if (!amount.decode_dec (amount_text))
 	{
-		auto result (amount.number () / rai::uBLT_ratio);
+		auto result (amount.number () / rai::ublt_ratio);
 		boost::property_tree::ptree response_l;
 		response_l.put ("amount", result.convert_to<std::string> ());
 		response (response_l);
@@ -2703,7 +2703,7 @@ void rai::rpc_handler::ublt_to_raw ()
 	rai::uint128_union amount;
 	if (!amount.decode_dec (amount_text))
 	{
-		auto result (amount.number () * rai::BLT_ratio);
+		auto result (amount.number () * rai::blt_ratio);
 		if (result > amount.number ())
 		{
 			boost::property_tree::ptree response_l;

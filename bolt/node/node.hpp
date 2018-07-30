@@ -1,17 +1,10 @@
 #pragma once
 
-<<<<<<< HEAD:bolt/node/node.hpp
 #include <bolt/ledger.hpp>
 #include <bolt/lib/work.hpp>
 #include <bolt/node/bootstrap.hpp>
+#include <bolt/node/stats.hpp>
 #include <bolt/node/wallet.hpp>
-=======
-#include <rai/ledger.hpp>
-#include <rai/lib/work.hpp>
-#include <rai/node/bootstrap.hpp>
-#include <rai/node/stats.hpp>
-#include <rai/node/wallet.hpp>
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/node/node.hpp
 
 #include <condition_variable>
 #include <memory>
@@ -125,7 +118,7 @@ public:
 	static unsigned constexpr announcement_min = 4;
 	// Threshold to start logging blocks haven't yet been confirmed
 	static unsigned constexpr announcement_long = 20;
-	static unsigned constexpr announce_interval_ms = (rai::rai_network == rai::rai_networks::rai_test_network) ? 10 : 16000;
+	static unsigned constexpr announce_interval_ms = (rai::rai_network == rai::rai_networks::bolt_test_network) ? 10 : 16000;
 	static size_t constexpr election_history_size = 2048;
 };
 class operation
@@ -320,8 +313,8 @@ public:
 	UPNPUrls urls; // Something for UPnP
 	IGDdatas data; // Some other UPnP thing
 	// Primes so they infrequently happen at the same time
-	static int constexpr mapping_timeout = rai::rai_network == rai::rai_networks::rai_test_network ? 53 : 3593;
-	static int constexpr check_timeout = rai::rai_network == rai::rai_networks::rai_test_network ? 17 : 53;
+	static int constexpr mapping_timeout = rai::rai_network == rai::rai_networks::bolt_test_network ? 53 : 3593;
+	static int constexpr check_timeout = rai::rai_network == rai::rai_networks::bolt_test_network ? 17 : 53;
 	boost::asio::ip::address_v4 address;
 	std::array<mapping_protocol, 2> protocols;
 	uint64_t check_count;
@@ -405,15 +398,7 @@ public:
 	boost::asio::ip::udp::resolver resolver;
 	rai::node & node;
 	bool on;
-<<<<<<< HEAD:bolt/node/node.hpp
-	uint64_t insufficient_work_count;
-	uint64_t error_count;
-	rai::message_statistics incoming;
-	rai::message_statistics outgoing;
-	static uint16_t const node_port = rai::rai_network == rai::rai_networks::rai_live_network ? 7085 : 54001;
-=======
-	static uint16_t const node_port = rai::rai_network == rai::rai_networks::rai_live_network ? 7075 : 54000;
->>>>>>> 283957ee1b4fcb1099c31a1d8c5583c27027d2bf:rai/node/node.hpp
+	static uint16_t const node_port = rai::rai_network == rai::rai_networks::bolt_live_network ? 7085 : 54001;
 };
 class logging
 {
